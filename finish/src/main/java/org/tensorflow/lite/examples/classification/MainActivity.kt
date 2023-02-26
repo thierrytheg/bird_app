@@ -28,11 +28,7 @@ import android.util.Size
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
@@ -44,10 +40,14 @@ import org.tensorflow.lite.examples.classification.ui.RecognitionAdapter
 import org.tensorflow.lite.examples.classification.util.YuvToRgbConverter
 import org.tensorflow.lite.examples.classification.viewmodel.Recognition
 import org.tensorflow.lite.examples.classification.viewmodel.RecognitionListViewModel
+import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.model.Model
+import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.Executors
-import org.tensorflow.lite.gpu.CompatibilityList
+import kotlin.random.Random
+
 
 // Constants
 private const val MAX_RESULT_DISPLAY = 3 // Maximum number of results displayed
@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
+            createnewfile()
         } else {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
@@ -155,7 +156,29 @@ class MainActivity : AppCompatActivity() {
      * 3. Attach both to the lifecycle of this activity
      * 4. Pipe the output of the preview object to the PreviewView on the screen
      */
-    private fun startCamera() {
+
+        private fun createnewfile() {
+
+        val path = this.getExternalFilesDir(null)
+        val filename = "bird_tracking.txt"
+
+        val file = File(path, filename)
+
+
+        file.createNewFile()
+        val data: String = "time,label,score,\n"
+        file.appendText("$data")
+
+
+        //else {Toast.makeText(this,"A file already exists",Toast.LENGTH_SHORT).show()}
+
+        //if (!file.exists()) {Toast.makeText(this,"A new file was created",Toast.LENGTH_SHORT).show()}
+        //else{Toast.makeText(this,"A file already exists",Toast.LENGTH_SHORT).show()}
+
+        }
+
+
+        private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener(Runnable {
@@ -243,9 +266,25 @@ class MainActivity : AppCompatActivity() {
                 }.take(MAX_RESULT_DISPLAY) // take the top results
 
             // TODO 4: Converting the top probability items into a list of recognitions
+            //for (output in outputs) {
+            //    items.add(Recognition(output.label, output.score))
+            //}
+
+            val filename = File("/storage/emulated/0/Android/data/org.tensorflow.lite.examples.classification/files/bird_tracking.txt")
             for (output in outputs) {
-                items.add(Recognition(output.label, output.score))
+
+                if (output.score > 0.75)
+                //if (listOf(output.score).first()
+                    items.add(Recognition(output.label, output.score))
+                    //filename.appendText(listOf(output).toString()+"\n")
+                    //filename.appendText(listOf(outputs).toString()+"\n")
+
+                if (listOf(outputs.first().score).first().toFloat()>0.75)
+
+                    filename.appendText(System.currentTimeMillis().toString()+","+listOf(outputs.first().label).first().toString()+","+listOf(outputs.first().score).first().toString()+"\n")
+
             }
+
 
 //            // START - Placeholder code at the start of the codelab. Comment this block of code out.
 //            for (i in 0 until MAX_RESULT_DISPLAY){
@@ -259,6 +298,7 @@ class MainActivity : AppCompatActivity() {
             // Close the image,this tells CameraX to feed the next image to the analyzer
             imageProxy.close()
         }
+
 
         /**
          * Convert Image Proxy to Bitmap
