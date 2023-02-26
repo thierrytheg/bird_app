@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         file.appendText("$data")
 
 
-        Toast.makeText(this,"Welcome to you",Toast.LENGTH_SHORT).show()
+        Toast.makeText(this,"Welcome",Toast.LENGTH_SHORT).show()
 
         //if (!file.exists()) {Toast.makeText(this,"A new file was created",Toast.LENGTH_SHORT).show()}
         //else{Toast.makeText(this,"A file already exists",Toast.LENGTH_SHORT).show()}
