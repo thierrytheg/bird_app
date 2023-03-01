@@ -41,8 +41,11 @@ import org.tensorflow.lite.examples.classification.util.YuvToRgbConverter
 import org.tensorflow.lite.examples.classification.viewmodel.Recognition
 import org.tensorflow.lite.examples.classification.viewmodel.RecognitionListViewModel
 import org.tensorflow.lite.gpu.CompatibilityList
+import org.tensorflow.lite.support.common.TensorProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.model.Model
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
@@ -165,12 +168,13 @@ class MainActivity : AppCompatActivity() {
         val file = File(path, filename)
 
 
-        file.createNewFile()
-        val data: String = "time,label,score,\n"
-        file.appendText("$data")
+        if (!file.exists())
+        {
+            file.createNewFile()
+            val data: String = "time,label,score,\n"
+            file.appendText("$data")
+        }
 
-
-        Toast.makeText(this,"Welcome",Toast.LENGTH_SHORT).show()
 
         //if (!file.exists()) {Toast.makeText(this,"A new file was created",Toast.LENGTH_SHORT).show()}
         //else{Toast.makeText(this,"A file already exists",Toast.LENGTH_SHORT).show()}
@@ -280,10 +284,11 @@ class MainActivity : AppCompatActivity() {
                     //filename.appendText(listOf(outputs).toString()+"\n")
 
                 if (listOf(outputs.first().score).first().toFloat()>0.75)
-
                     filename.appendText(System.currentTimeMillis().toString()+","+listOf(outputs.first().label).first().toString()+","+listOf(outputs.first().score).first().toString()+"\n")
 
-            }
+                Thread.sleep(1000L)
+
+             }
 
 
 //            // START - Placeholder code at the start of the codelab. Comment this block of code out.

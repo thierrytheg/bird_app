@@ -33,13 +33,14 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            android:background="#8000">
+            android:background="#8000"
+            android:visibility="invisible">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/tfl2_logo"
-                    android:contentDescription="@string/tensorflow_lite_logo_description" />
+                    android:contentDescription="@string/tensorflow_lite_logo_description"
+                    android:src="@drawable/tfl2_logo" />
 
         </androidx.appcompat.widget.Toolbar>
 
