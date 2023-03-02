@@ -33,6 +33,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toIcon
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import org.tensorflow.lite.examples.classification.ml.FlowerModel
@@ -51,7 +52,7 @@ import java.util.concurrent.Executors
 
 
 // Constants
-private const val MAX_RESULT_DISPLAY = 3 // Maximum number of results displayed
+private const val MAX_RESULT_DISPLAY = 5 // Maximum number of results displayed
 private const val TAG = "TFL Classify" // Name for logging
 private const val REQUEST_CODE_PERMISSIONS = 999 // Return code after asking for permission
 private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA) // permission needed
@@ -272,24 +273,42 @@ class MainActivity : AppCompatActivity() {
             //    items.add(Recognition(output.label, output.score))
             //}
 
+
+
             val filename = File("/storage/emulated/0/Android/data/org.tensorflow.lite.examples.classification/files/bird_tracking.txt")
+
             for (output in outputs) {
 
-                if (output.score > 0.75)
+                //if (output.score > 0.75)
                 //if (listOf(output.score).first()
-                    items.add(Recognition(output.label, output.score))
+                    //items.add(Recognition(output.label, output.score))
                     //filename.appendText(listOf(output).toString()+"\n")
                     //filename.appendText(listOf(outputs).toString()+"\n")
 
-                if (listOf(outputs.first().score).first().toFloat()>0.75)
-                    filename.appendText(System.currentTimeMillis().toString()+","+listOf(outputs.first().label).first().toString()+","+listOf(outputs.first().score).first().toString()+"\n")
+                if (listOf(outputs.first().score).first().toFloat()>0.75) {
+                    val bitmap: Bitmap = tfImage.bitmap
+                    //val bitmap = tfImage.bitmap // Convert TensorImage to Bitmap
+                    val imagefile = File(
+                        "/storage/emulated/0/Android/data/org.tensorflow.lite.examples.classification/files/" + listOf(
+                            outputs.first().label
+                        ).first().toString() + "_" + listOf(outputs.first().score).first()
+                            .toString() + "_" + System.currentTimeMillis().toString() + ".jpg"
+                    )
+                    val outputStream = FileOutputStream(imagefile)
 
-                    val bitmap: Bitmap = tfImage.bitmap // Convert TensorImage to Bitmap
-                    val file = File("/storage/emulated/0/Android/data/org.tensorflow.lite.examples.classification/files/"+listOf(outputs.first().label).first().toString()+"_"+listOf(outputs.first().score).first().toString()+System.currentTimeMillis().toString()+".jpg")
-                    val outputStream = FileOutputStream(file)
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     outputStream.flush()
                     outputStream.close()
+
+                    filename.appendText(
+                        System.currentTimeMillis()
+                            .toString() + "," + listOf(outputs.first().label).first()
+                            .toString() + "," + listOf(outputs.first().score).first()
+                            .toString() + "\n"
+                    )
+                }
+
+
 
                 
              }
