@@ -41,15 +41,13 @@ import org.tensorflow.lite.examples.classification.util.YuvToRgbConverter
 import org.tensorflow.lite.examples.classification.viewmodel.Recognition
 import org.tensorflow.lite.examples.classification.viewmodel.RecognitionListViewModel
 import org.tensorflow.lite.gpu.CompatibilityList
-import org.tensorflow.lite.support.common.TensorProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.model.Model
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
-import kotlin.random.Random
+
+
 
 
 // Constants
@@ -286,8 +284,14 @@ class MainActivity : AppCompatActivity() {
                 if (listOf(outputs.first().score).first().toFloat()>0.75)
                     filename.appendText(System.currentTimeMillis().toString()+","+listOf(outputs.first().label).first().toString()+","+listOf(outputs.first().score).first().toString()+"\n")
 
-                Thread.sleep(1000L)
+                    val bitmap: Bitmap = tfImage.bitmap // Convert TensorImage to Bitmap
+                    val file = File("/storage/emulated/0/Android/data/org.tensorflow.lite.examples.classification/files/"+listOf(outputs.first().label).first().toString()+"_"+listOf(outputs.first().score).first().toString()+System.currentTimeMillis().toString()+".jpg")
+                    val outputStream = FileOutputStream(file)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                    outputStream.flush()
+                    outputStream.close()
 
+                
              }
 
 
