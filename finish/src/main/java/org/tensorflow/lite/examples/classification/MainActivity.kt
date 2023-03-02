@@ -286,13 +286,15 @@ class MainActivity : AppCompatActivity() {
                     //filename.appendText(listOf(outputs).toString()+"\n")
 
                 if (listOf(outputs.first().score).first().toFloat()>0.75) {
-                    val bitmap: Bitmap = tfImage.bitmap
-                    //val bitmap = tfImage.bitmap // Convert TensorImage to Bitmap
+
+                    val my_timestamp = System.currentTimeMillis().toString()
+
+                    val bitmap: Bitmap = tfImage.bitmap // Convert TensorImage to Bitmap
                     val imagefile = File(
                         "/storage/emulated/0/Android/data/org.tensorflow.lite.examples.classification/files/" + listOf(
                             outputs.first().label
                         ).first().toString() + "_" + listOf(outputs.first().score).first()
-                            .toString() + "_" + System.currentTimeMillis().toString() + ".jpg"
+                            .toString() + "_" + my_timestamp + ".jpg"
                     )
                     val outputStream = FileOutputStream(imagefile)
 
@@ -301,8 +303,7 @@ class MainActivity : AppCompatActivity() {
                     outputStream.close()
 
                     filename.appendText(
-                        System.currentTimeMillis()
-                            .toString() + "," + listOf(outputs.first().label).first()
+                        "$my_timestamp," + listOf(outputs.first().label).first()
                             .toString() + "," + listOf(outputs.first().score).first()
                             .toString() + "\n"
                     )
