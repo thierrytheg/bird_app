@@ -307,6 +307,8 @@ class MainActivity : AppCompatActivity() {
                             .toString() + "," + listOf(outputs.first().score).first()
                             .toString() + "\n"
                     )
+
+                    Thread.sleep(1000)
                 }
 
 
